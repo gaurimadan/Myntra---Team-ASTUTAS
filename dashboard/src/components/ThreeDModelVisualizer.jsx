@@ -1,5 +1,8 @@
-import React, { useState, useEffect } from 'react';
+// 3DModelVisualizer.jsx
+import React, { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
+import { Canvas } from '@react-three/fiber';
+import { OrbitControls, useGLTF } from '@react-three/drei';
 import '../assets/3DModelVisualizer.css';
 
 const ThreeDModelVisualizer = () => {
@@ -94,9 +97,14 @@ const ThreeDModelVisualizer = () => {
       {taskId && (
         <div>
           {status === 'SUCCEEDED' && progress === 100 ? (
-            <a className="text-blue" href={glbUrl} download>
-              <h1>Download GLB file</h1>
-            </a>
+            <div style={{ width: '100%', height: '500px' }}>
+              <Canvas>
+                <ambientLight />
+                <pointLight position={[10, 10, 10]} />
+                <Model glbUrl={glbUrl} />
+                <OrbitControls />
+              </Canvas>
+            </div>
           ) : (
             <div>
               <p>Conversion in progress. Please wait...</p>
@@ -107,6 +115,11 @@ const ThreeDModelVisualizer = () => {
       )}
     </div>
   );
+};
+
+const Model = ({ glbUrl }) => {
+  const { scene } = useGLTF(glbUrl);
+  return <primitive object={scene} />;
 };
 
 export default ThreeDModelVisualizer;
